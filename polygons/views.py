@@ -4,11 +4,11 @@ from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 
 from .models import ProviderPolygon
-from .serializers import ProviderPolygonUserSerializer
+from .serializers import ProviderPolygonProviderSerializer
 
 
 class ProviderPolygonByLLView(ListAPIView):
-    serializer_class = ProviderPolygonUserSerializer
+    serializer_class = ProviderPolygonProviderSerializer
     permission_classes = (AllowAny,)
 
     def get_queryset(self):
