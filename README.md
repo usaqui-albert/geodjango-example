@@ -1,2 +1,2 @@
 # Geodjango-example
-This is an django app example to show how to start building a geodjango implementation.
+This is a django app example to show how to start building a geodjango implementation.
