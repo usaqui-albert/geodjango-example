@@ -53,3 +53,14 @@ class ProviderPolygonSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_geometry(instance):
         return build_geometry_json_response(instance.geom.coords)
+
+
+class ProviderPolygonUserSerializer(ProviderPolygonSerializer):
+    provider_name = serializers.SerializerMethodField(read_only=True)
+
+    class Meta(ProviderPolygonSerializer.Meta):
+        fields = ProviderPolygonSerializer.Meta.fields + ('provider_name',)
+
+    @staticmethod
+    def get_provider_name(value):
+        return value.user.name
