@@ -40,7 +40,9 @@ DJANGO_APPS = [
     'django.contrib.gis',
 ]
 
-INTERNAL_APPS = []
+INTERNAL_APPS = [
+    'users',
+]
 
 THIRD_PARTY_APPS = []
 
