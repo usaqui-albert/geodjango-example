@@ -42,6 +42,7 @@ DJANGO_APPS = [
 
 INTERNAL_APPS = [
     'users',
+    'polygons',
 ]
 
 THIRD_PARTY_APPS = []
