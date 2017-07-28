@@ -42,7 +42,7 @@ class CreateProviderPolygonSerializer(serializers.ModelSerializer):
 
 
 class ProviderPolygonSerializer(serializers.ModelSerializer):
-    geometry = serializers.SerializerMethodField()
+    geometry = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = ProviderPolygon
