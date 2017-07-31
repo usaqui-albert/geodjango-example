@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager
 from django.conf import settings
+from django.db.models.signals import post_save
+
+from .signals import create_auth_token
 
 
 class User(AbstractBaseUser):
@@ -19,3 +22,11 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.email
+
+
+# Func to connect the signal on post save.
+post_save.connect(
+    create_auth_token,
+    sender=User,
+    dispatch_uid="users.models.user_post_save"
+)
