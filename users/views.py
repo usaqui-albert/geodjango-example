@@ -14,7 +14,7 @@ from moziotest.permissions import (
 
 from polygons.models import ProviderPolygon
 from polygons.serializers import (
-    CreateProviderPolygonSerializer, ProviderPolygonSerializer
+    ProviderPolygonSerializerToWrite, ProviderPolygonSerializer
 )
 
 
@@ -46,7 +46,7 @@ class ProviderPolygonView(ListCreateAPIView):
     permission_classes = (IsOwnerAccountOrReadOnly,)
 
     def create(self, request, *args, **kwargs):
-        serializer = CreateProviderPolygonSerializer(
+        serializer = ProviderPolygonSerializerToWrite(
             data=request.data,
             context={'user': request.user}
         )
@@ -64,8 +64,13 @@ class ProviderPolygonView(ListCreateAPIView):
 
 
 class ProviderPolygonDetailView(RetrieveUpdateDestroyAPIView):
-    serializer_class = ProviderPolygonSerializer
+    serializer_class = ProviderPolygonSerializerToWrite
     permission_classes = (IsOwnerObjectOrReadOnly,)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = ProviderPolygonSerializer(instance)
+        return Response(serializer.data)
 
     def get_queryset(self):
         return ProviderPolygon.objects.filter(user=self.kwargs['pk_user'])

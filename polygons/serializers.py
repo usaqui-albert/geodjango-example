@@ -21,7 +21,7 @@ class GeometrySerializer(serializers.Serializer):
         raise serializers.ValidationError('Geometry type should be Polygon.')
 
 
-class CreateProviderPolygonSerializer(serializers.ModelSerializer):
+class ProviderPolygonSerializerToWrite(serializers.ModelSerializer):
     geometry = GeometrySerializer(write_only=True)
 
     class Meta:
