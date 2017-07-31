@@ -55,7 +55,7 @@ class ProviderPolygonSerializer(serializers.ModelSerializer):
         return build_geometry_json_response(instance.geom.coords)
 
 
-class ProviderPolygonProviderSerializer(ProviderPolygonSerializer):
+class ProviderPolygonWithNameSerializer(ProviderPolygonSerializer):
     provider_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta(ProviderPolygonSerializer.Meta):
