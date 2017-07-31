@@ -7,7 +7,7 @@ from .models import ProviderPolygon
 from .serializers import ProviderPolygonWithNameSerializer
 
 
-class ProviderPolygonByLLView(ListAPIView):
+class ProviderPolygonByLocationView(ListAPIView):
     serializer_class = ProviderPolygonWithNameSerializer
     permission_classes = (AllowAny,)
 
