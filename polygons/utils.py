@@ -12,3 +12,10 @@ def build_geometry_json_response(coords):
         'type': 'Polygon',
         'coordinates': coords
     }
+
+
+def lists_matches(list_x, list_y):
+    for value_x, value_y in zip(list_x, list_y):
+        if value_x is not value_y:
+            return False
+    return True
