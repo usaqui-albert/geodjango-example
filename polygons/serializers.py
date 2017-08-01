@@ -66,6 +66,16 @@ class ProviderPolygonSerializerToWrite(serializers.ModelSerializer):
         provider_polygon.save()
         return provider_polygon
 
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'geometry':
+                instance.geom = get_polygon_obj(value)
+            else:
+                setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
 
 class ProviderPolygonSerializer(serializers.ModelSerializer):
     geometry = serializers.SerializerMethodField(read_only=True)
