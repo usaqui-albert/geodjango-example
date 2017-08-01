@@ -1,8 +1,8 @@
 from django.conf.urls import url
 
-from .views import ProviderPolygonByLLView
+from .views import ProviderPolygonByLocationView
 
 
 urlpatterns = [
-    url(r'^$', ProviderPolygonByLLView.as_view()),
+    url(r'^$', ProviderPolygonByLocationView.as_view()),
 ]

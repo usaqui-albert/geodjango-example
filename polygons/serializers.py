@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
 from .models import ProviderPolygon
-from .utils import get_polygon_obj, build_geometry_json_response
+from .utils import (
+    get_polygon_obj, build_geometry_json_response, lists_matches
+)
 
 
 class GeometrySerializer(serializers.Serializer):
@@ -18,10 +20,34 @@ class GeometrySerializer(serializers.Serializer):
     def validate_type(value):
         if value == 'Polygon':
             return value
-        raise serializers.ValidationError('Geometry type should be Polygon.')
+        raise serializers.ValidationError(
+            'The value of this field should be "Polygon".'
+        )
+
+    @staticmethod
+    def validate_coordinates(value):
+        if len(value) is not 1:
+            raise serializers.ValidationError(
+                'This field should follows GeoJSON object structure.'
+            )
+        coords_list = value[0]
+        if len(coords_list) < 4:
+            raise serializers.ValidationError(
+                'A Polygon should has at least 4 vertex points.'
+            )
+        for coord in coords_list:
+            if len(coord) is not 2:
+                raise serializers.ValidationError(
+                    'Every coordinate should has 2 values.'
+                )
+        if not lists_matches(coords_list[0], coords_list[-1]):
+            raise serializers.ValidationError(
+                'First and last value coordinates should match.'
+            )
+        return value
 
 
-class CreateProviderPolygonSerializer(serializers.ModelSerializer):
+class ProviderPolygonSerializerToWrite(serializers.ModelSerializer):
     geometry = GeometrySerializer(write_only=True)
 
     class Meta:
@@ -40,6 +66,16 @@ class CreateProviderPolygonSerializer(serializers.ModelSerializer):
         provider_polygon.save()
         return provider_polygon
 
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            if attr == 'geometry':
+                instance.geom = get_polygon_obj(value)
+            else:
+                setattr(instance, attr, value)
+
+        instance.save()
+        return instance
+
 
 class ProviderPolygonSerializer(serializers.ModelSerializer):
     geometry = serializers.SerializerMethodField(read_only=True)
@@ -55,7 +91,7 @@ class ProviderPolygonSerializer(serializers.ModelSerializer):
         return build_geometry_json_response(instance.geom.coords)
 
 
-class ProviderPolygonProviderSerializer(ProviderPolygonSerializer):
+class ProviderPolygonWithNameSerializer(ProviderPolygonSerializer):
     provider_name = serializers.SerializerMethodField(read_only=True)
 
     class Meta(ProviderPolygonSerializer.Meta):

@@ -25,8 +25,9 @@ SECRET_KEY = '37)kxu$er@_=hwks+5p&5x1#a=-4n@sxp2jqrci!@g3=l_-h6w'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+AMAZON_HOST = os.environ.get('AMAZON_HOST', None)
 
+ALLOWED_HOSTS = [host for host in [AMAZON_HOST] if host]
 
 # Application definition
 
@@ -47,6 +48,7 @@ INTERNAL_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',
     'rest_framework_docs',
     'corsheaders',
 ]
@@ -138,3 +140,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+APPEND_SLASH = False
+
+AUTH_USER_MODEL = 'users.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
