@@ -2,8 +2,8 @@ from .settings import *
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ":memory:",
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': "db_test",
     }
 }
 
