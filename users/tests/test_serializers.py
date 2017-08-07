@@ -214,7 +214,7 @@ class TestCreateUserSerializer(TestDataCases):
         )
 
 
-class TestUserSerializer(TestDataCases):
+class TestUserSerializer(object):
 
     serializer_class = UserSerializer
 
@@ -236,7 +236,7 @@ class TestUserSerializer(TestDataCases):
 
     def test_update_password_not_received(self):
         old_password = '123456'
-        new_password = 'new     password'
+        new_password = 'new password'
         user = mixer.blend(User, password=old_password)
         user.set_password(user.password)
         user.save()
