@@ -19,7 +19,7 @@ from polygons.serializers import (
 
 
 class UserView(ListCreateAPIView):
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('-id')
     serializer_class = CreateUserSerializer
     permission_classes = (AllowAny,)
 
@@ -60,7 +60,8 @@ class ProviderPolygonView(ListCreateAPIView):
         )
 
     def get_queryset(self):
-        return ProviderPolygon.objects.filter(user=self.kwargs['pk'])
+        return ProviderPolygon.objects.filter(
+            user=self.kwargs['pk']).order_by('-id')
 
 
 class ProviderPolygonDetailView(RetrieveUpdateDestroyAPIView):

@@ -21,6 +21,7 @@ class TestUserView(TestDataCases):
     def test_put_request_not_allowed(self):
         req = self.factory.put('/')
         resp = self.tested_view.as_view()(req)
+
         assert 'detail' in resp.data
         assert resp.data['detail'] == 'Method "PUT" not allowed.'
         assert resp.status_code == 405
@@ -28,6 +29,7 @@ class TestUserView(TestDataCases):
     def test_patch_request_not_allowed(self):
         req = self.factory.patch('/')
         resp = self.tested_view.as_view()(req)
+
         assert 'detail' in resp.data
         assert resp.data['detail'] == 'Method "PATCH" not allowed.'
         assert resp.status_code == 405
@@ -35,6 +37,7 @@ class TestUserView(TestDataCases):
     def test_delete_request_not_allowed(self):
         req = self.factory.delete('/')
         resp = self.tested_view.as_view()(req)
+
         assert 'detail' in resp.data
         assert resp.data['detail'] == 'Method "DELETE" not allowed.'
         assert resp.status_code == 405
@@ -44,26 +47,33 @@ class TestUserView(TestDataCases):
         resp = self.tested_view.as_view()(req)
         assert resp.status_code == 200, 'Should return status 200 OK'
 
-    def test_get_request_return_users_list(self):
+    def test_get_request_pagination(self):
         req = self.factory.get('/')
         resp = self.tested_view.as_view()(req)
-        assert isinstance(resp.data, list), 'Should return a list of users'
+
+        assert isinstance(resp.data, dict)
+        assert 'results' in resp.data
+        assert isinstance(resp.data['results'], list), (
+            'Should return a list of users in the results key')
 
     def test_post_request_successful(self):
         req = self.factory.post('/', self.data_valid)
         resp = self.tested_view.as_view()(req)
+
         assert 'id' in resp.data, 'Should be created and return an id'
         assert resp.status_code == 201, 'Should return status 201 CREATED'
 
     def test_post_request_successful_return_token(self):
         req = self.factory.post('/', self.data_valid)
         resp = self.tested_view.as_view()(req)
+
         assert 'token' in resp.data, 'Should return the authentication token'
         assert resp.status_code == 201, 'Should return status 201 CREATED'
 
     def test_post_request_email_missing(self):
         req = self.factory.post('/', self.data_email_missing)
         resp = self.tested_view.as_view()(req)
+
         assert 'email' in resp.data
         assert 'This field is required.' in resp.data['email']
         assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
@@ -71,6 +81,7 @@ class TestUserView(TestDataCases):
     def test_post_request_wrong_format(self):
         req = self.factory.post('/', self.data_email_wrong_format)
         resp = self.tested_view.as_view()(req)
+
         assert 'email' in resp.data
         assert 'Enter a valid email address.' in resp.data['email']
         assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
@@ -78,6 +89,7 @@ class TestUserView(TestDataCases):
     def test_post_request_email_field_empty(self):
         req = self.factory.post('/', self.data_email_field_empty)
         resp = self.tested_view.as_view()(req)
+
         assert 'email' in resp.data
         assert 'This field may not be blank.' in resp.data['email']
         assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
@@ -86,8 +98,45 @@ class TestUserView(TestDataCases):
         mixer.blend(User, email='johndoe@gmail.com')
         req = self.factory.post('/', self.data_email_already_exists)
         resp = self.tested_view.as_view()(req)
+
         assert 'email' in resp.data
         assert 'user with this email already exists.' in resp.data['email']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_phone_number_longer_than_15(self):
+        req = self.factory.post('/', self.data_phone_number_longer_than_15)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'phone_number' in resp.data
+        error_message = 'Ensure this field has no more than 15 characters.'
+        assert error_message in resp.data['phone_number']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_language_does_not_exist(self):
+        req = self.factory.post('/', self.data_language_does_not_exist)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'language' in resp.data
+        error_message = '"lan123" is not a valid choice.'
+        assert error_message in resp.data['language']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_language_longer_than_7(self):
+        req = self.factory.post('/', self.data_language_longer_than_7)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'language' in resp.data
+        error_message = '"portuguese" is not a valid choice.'
+        assert error_message in resp.data['language']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_currency_longer_than_3(self):
+        req = self.factory.post('/', self.data_currency_longer_than_3)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'currency' in resp.data
+        error_message = 'Ensure this field has no more than 3 characters.'
+        assert error_message in resp.data['currency']
         assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
 
 
@@ -132,8 +181,8 @@ class TestUserDetailView(TestDataCases):
         resp = self.tested_view.as_view()(req, pk=1)
 
         assert 'detail' in resp.data
-        message_error = 'You do not have permission to perform this action.'
-        assert message_error in resp.data['detail']
+        error_message = 'You do not have permission to perform this action.'
+        assert error_message in resp.data['detail']
         assert resp.status_code == 403, 'Should return status 403 FORBIDDEN'
 
     def test_delete_request_account_owner(self):
@@ -153,8 +202,8 @@ class TestUserDetailView(TestDataCases):
         resp = self.tested_view.as_view()(req, pk=1)
 
         assert 'detail' in resp.data
-        message_error = 'You do not have permission to perform this action.'
-        assert message_error in resp.data['detail']
+        error_message = 'You do not have permission to perform this action.'
+        assert error_message in resp.data['detail']
         assert resp.status_code == 403, 'Should return status 403 FORBIDDEN'
 
     def test_patch_request_account_owner(self):
@@ -178,8 +227,8 @@ class TestUserDetailView(TestDataCases):
         resp = self.tested_view.as_view()(req, pk=1)
 
         assert 'detail' in resp.data
-        message_error = 'You do not have permission to perform this action.'
-        assert message_error in resp.data['detail']
+        error_message = 'You do not have permission to perform this action.'
+        assert error_message in resp.data['detail']
         assert resp.status_code == 403, 'Should return status 403 FORBIDDEN'
 
     def test_put_request_account_owner(self):

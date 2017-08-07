@@ -92,7 +92,7 @@ class TestCreateUserSerializer(TestDataCases):
         serializer = self.serializer_class(data=self.data_email_missing)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_email_missing_message(self):
+    def test_errors_message_email_missing(self):
         serializer = self.serializer_class(data=self.data_email_missing)
         serializer.is_valid()
         assert 'email' in serializer.errors, 'Should has email key'
@@ -102,7 +102,7 @@ class TestCreateUserSerializer(TestDataCases):
         serializer = self.serializer_class(data=self.data_email_wrong_format)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_email_wrong_format_message(self):
+    def test_errors_message_email_wrong_format(self):
         serializer = self.serializer_class(data=self.data_email_wrong_format)
         serializer.is_valid()
         assert 'email' in serializer.errors, 'Should has email key'
@@ -112,7 +112,7 @@ class TestCreateUserSerializer(TestDataCases):
         serializer = self.serializer_class(data=self.data_email_field_empty)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_email_field_empty_message(self):
+    def test_errors_message_email_field_empty(self):
         serializer = self.serializer_class(data=self.data_email_field_empty)
         serializer.is_valid()
         assert 'email' in serializer.errors, 'Should has email key'
@@ -123,66 +123,66 @@ class TestCreateUserSerializer(TestDataCases):
         serializer = self.serializer_class(data=self.data_email_already_exists)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_email_already_exists_message(self):
+    def test_errors_message_email_already_exists(self):
         mixer.blend(User, email='johndoe@gmail.com')
         serializer = self.serializer_class(data=self.data_email_already_exists)
         serializer.is_valid()
         assert 'email' in serializer.errors, 'Should has email key'
-        message_error = 'user with this email already exists.'
-        assert message_error in serializer.errors['email']
+        error_message = 'user with this email already exists.'
+        assert error_message in serializer.errors['email']
 
     def test_is_valid_phone_number_longer_than_15(self):
         serializer = self.serializer_class(
             data=self.data_phone_number_longer_than_15)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_phone_number_longer_than_15_message(self):
+    def test_errors_message_phone_number_longer_than_15(self):
         serializer = self.serializer_class(
             data=self.data_phone_number_longer_than_15)
         serializer.is_valid()
         assert 'phone_number' in serializer.errors, (
             'Should has phone_number key')
-        message_error = 'Ensure this field has no more than 15 characters.'
-        assert message_error in serializer.errors['phone_number']
+        error_message = 'Ensure this field has no more than 15 characters.'
+        assert error_message in serializer.errors['phone_number']
 
     def test_is_valid_language_does_not_exist(self):
         serializer = self.serializer_class(
             data=self.data_language_does_not_exist)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_language_does_not_exist_message(self):
+    def test_errors_message_language_does_not_exist(self):
         serializer = self.serializer_class(
             data=self.data_language_does_not_exist)
         serializer.is_valid()
         assert 'language' in serializer.errors, 'Should has language key'
-        message_error = '"lan123" is not a valid choice.'
-        assert message_error in serializer.errors['language']
+        error_message = '"lan123" is not a valid choice.'
+        assert error_message in serializer.errors['language']
 
     def test_is_valid_language_longer_than_7(self):
         serializer = self.serializer_class(
             data=self.data_language_longer_than_7)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_language_longer_than_7_message(self):
+    def test_errors_message_language_longer_than_7(self):
         serializer = self.serializer_class(
             data=self.data_language_longer_than_7)
         serializer.is_valid()
         assert 'language' in serializer.errors, 'Should has language key'
-        message_error = '"portuguese" is not a valid choice.'
-        assert message_error in serializer.errors['language']
+        error_message = '"portuguese" is not a valid choice.'
+        assert error_message in serializer.errors['language']
 
     def test_is_valid_currency_longer_than_3(self):
         serializer = self.serializer_class(
             data=self.data_currency_longer_than_3)
         assert not serializer.is_valid(), 'Should not be a valid data'
 
-    def test_is_valid_currency_longer_than_3_message(self):
+    def test_errors_message_currency_longer_than_3(self):
         serializer = self.serializer_class(
             data=self.data_currency_longer_than_3)
         serializer.is_valid()
         assert 'currency' in serializer.errors, 'Should has currency key'
-        message_error = 'Ensure this field has no more than 3 characters.'
-        assert message_error in serializer.errors['currency']
+        error_message = 'Ensure this field has no more than 3 characters.'
+        assert error_message in serializer.errors['currency']
 
     def test_save_return_a_user_instance(self):
         serializer = self.serializer_class(data=self.data_valid)
@@ -231,8 +231,8 @@ class TestUserSerializer(object):
         serializer = self.serializer_class(
             jane_user, data={'email': john_user.email}, partial=True)
         serializer.is_valid()
-        message_error = 'user with this email already exists.'
-        assert message_error in serializer.errors['email']
+        error_message = 'user with this email already exists.'
+        assert error_message in serializer.errors['email']
 
     def test_update_password_not_received(self):
         old_password = '123456'
