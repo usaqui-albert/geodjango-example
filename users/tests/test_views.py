@@ -103,6 +103,42 @@ class TestUserView(TestDataCases):
         assert 'user with this email already exists.' in resp.data['email']
         assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
 
+    def test_post_request_phone_number_longer_than_15(self):
+        req = self.factory.post('/', self.data_phone_number_longer_than_15)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'phone_number' in resp.data
+        error_message = 'Ensure this field has no more than 15 characters.'
+        assert error_message in resp.data['phone_number']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_language_does_not_exist(self):
+        req = self.factory.post('/', self.data_language_does_not_exist)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'language' in resp.data
+        error_message = '"lan123" is not a valid choice.'
+        assert error_message in resp.data['language']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_language_longer_than_7(self):
+        req = self.factory.post('/', self.data_language_longer_than_7)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'language' in resp.data
+        error_message = '"portuguese" is not a valid choice.'
+        assert error_message in resp.data['language']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
+    def test_post_request_currency_longer_than_3(self):
+        req = self.factory.post('/', self.data_currency_longer_than_3)
+        resp = self.tested_view.as_view()(req)
+
+        assert 'currency' in resp.data
+        error_message = 'Ensure this field has no more than 3 characters.'
+        assert error_message in resp.data['currency']
+        assert resp.status_code == 400, 'Should return status 400 BAD REQUEST'
+
 
 class TestUserDetailView(TestDataCases):
 
