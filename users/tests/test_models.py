@@ -12,7 +12,7 @@ pytestmark = pytest.mark.django_db
 
 class TestUser(object):
     def test_create_user_in_database(self):
-        obj = mixer.blend(User)
+        obj = mixer.blend(User, pk=1)
         assert obj.pk == 1, 'Should create a user in database getting an id'
 
     def test_create_user_instance(self):
